@@ -6,11 +6,13 @@ import { taskTypeRoutes } from './routes/taskTypes'
 import { taskRoutes } from './routes/tasks'
 import { documentRoutes } from './routes/documents'
 import { errorHandler } from './middlewares/errorHandler'
+import { setupSwagger } from './swagger'
 
 const app = express()
 const PORT = process.env.PORT || 3000
 
 app.use(express.json())
+setupSwagger(app)
 
 app.use('/api/auth', authRoutes)
 app.use('/api/families', familyRoutes)
