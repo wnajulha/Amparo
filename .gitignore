@@ -1,0 +1,24 @@
+# Node
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+
+# Prisma
+prisma/.env
+
+# macOS
+.DS_Store
+
+# Xcode / Swift
+apps/ios/DerivedData/
+apps/ios/*.xcuserstate
+apps/ios/**/*.xcuserdata
+apps/ios/.build/
+*.ipa
+*.dSYM
+
+# Logs
+*.log
+npm-debug.log*

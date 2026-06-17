@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id // Supabase Auth UID
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+
+  familyMembers FamilyMember[]
+  createdTasks  Task[]           @relation("TaskCreator")
+  assignments   TaskAssignment[]
+}
+
+model Family {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  members FamilyMember[]
+  elderly Elderly[]
+}
+
+model FamilyMember {
+  id       String     @id @default(cuid())
+  role     MemberRole @default(MEMBER)
+  joinedAt DateTime   @default(now())
+
+  userId   String
+  familyId String
+  user     User   @relation(fields: [userId], references: [id])
+  family   Family @relation(fields: [familyId], references: [id])
+
+  createdTasks Task[]           @relation("MemberCreatedTasks")
+  assignments  TaskAssignment[]
+
+  @@unique([userId, familyId])
+}
+
+enum MemberRole {
+  ADMIN
+  MEMBER
+}
+
+model Elderly {
+  id               String   @id @default(cuid())
+  name             String
+  birthDate        DateTime
+  conditions       String[]
+  allergies        String[]
+  emergencyContact Json
+  createdAt        DateTime @default(now())
+
+  familyId String
+  family   Family @relation(fields: [familyId], references: [id])
+
+  tasks     Task[]
+  documents Document[]
+}
+
+model TaskType {
+  id        String        @id @default(cuid())
+  name      String
+  baseType  BaseTaskType?
+  isDefault Boolean       @default(false)
+
+  tasks Task[]
+}
+
+enum BaseTaskType {
+  MEDICATION
+  MEDICAL_APPT
+  PHYSICAL
+  NUTRITION
+  EXAM
+  GENERAL
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  name        String
+  frequency   Frequency
+  startDate   DateTime
+  endDate     DateTime
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  elderlyId             String
+  elderly               Elderly      @relation(fields: [elderlyId], references: [id])
+  taskTypeId            String
+  taskType              TaskType     @relation(fields: [taskTypeId], references: [id])
+  creatorId             String
+  creator               User         @relation("TaskCreator", fields: [creatorId], references: [id])
+  familyMemberCreatorId String
+  familyMemberCreator   FamilyMember @relation("MemberCreatedTasks", fields: [familyMemberCreatorId], references: [id])
+
+  assignments TaskAssignment[]
+}
+
+enum Frequency {
+  ONE_TIME
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+model TaskAssignment {
+  id         String   @id @default(cuid())
+  assignedAt DateTime @default(now())
+
+  taskId   String
+  task     Task         @relation(fields: [taskId], references: [id])
+  memberId String
+  member   FamilyMember @relation(fields: [memberId], references: [id])
+  userId   String
+  user     User         @relation(fields: [userId], references: [id])
+
+  @@unique([taskId, memberId])
+}
+
+model Document {
+  id         String   @id @default(cuid())
+  name       String
+  fileUrl    String
+  mimeType   String
+  sizeBytes  Int
+  uploadedAt DateTime @default(now())
+
+  elderlyId String
+  elderly   Elderly @relation(fields: [elderlyId], references: [id])
+}
