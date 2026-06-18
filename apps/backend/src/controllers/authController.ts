@@ -1,6 +1,7 @@
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import { z } from 'zod'
 import prisma from '../lib/prisma'
+import { supabase } from '../lib/supabase'
 import { AuthRequest } from '../middlewares/auth'
 
 const registerSchema = z.object({
@@ -33,4 +34,15 @@ export async function register(req: AuthRequest, res: Response) {
 
 export async function me(req: AuthRequest, res: Response) {
   res.json(req.user)
+}
+
+export async function login(req: Request, res: Response) {
+  const { email, password } = req.body
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+  if (error) {
+    res.status(401).json({ error: error.message })
+    return
+  }
+  console.log('[DEV] access_token:', data.session?.access_token)
+  res.json({ access_token: data.session?.access_token, user: data.user })
 }
