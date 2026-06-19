@@ -63,7 +63,6 @@ struct LoginView: View {
                 }
                 .font(.subheadline)
                 .padding(.bottom, Spacing.xMedium)
-                .accessibilityIdentifier("registerButton")
             }
             .padding(.horizontal, Spacing.xMedium)
         }

@@ -10,9 +10,9 @@ struct RegisterView: View {
             ScrollView {
                 VStack(spacing: Spacing.xMedium) {
                     VStack(spacing: Spacing.medium) {
-                        FormField(label: "Nome completo", icon: "person", placeholder: "Seu nome", text: Bindable(viewModel).name).accessibilityIdentifier("nameField")
-                        FormField(label: "E-mail", icon: "envelope", placeholder: "seu@email.com", text: Bindable(viewModel).email).accessibilityIdentifier("emailField")
-                        FormField(label: "Senha", icon: "lock", placeholder: "Mínimo 6 caracteres", text: Bindable(viewModel).password, isSecure: true).accessibilityIdentifier("passwordField")
+                        FormField(label: "Nome completo", icon: "person", placeholder: "Seu nome", text: Bindable(viewModel).name)
+                        FormField(label: "E-mail", icon: "envelope", placeholder: "seu@email.com", text: Bindable(viewModel).email)
+                        FormField(label: "Senha", icon: "lock", placeholder: "Mínimo 6 caracteres", text: Bindable(viewModel).password, isSecure: true)
                     }
 
                     if let error = viewModel.error {
@@ -26,7 +26,6 @@ struct RegisterView: View {
                             await viewModel.signUp(session: authSession) { dismiss() }
                         }
                     }, backgroundColor: Color.brandNavy, textColor: .white)
-                    .accessibilityIdentifier("createAccountButton")
                 }
                 .padding(Spacing.xMedium)
             }
